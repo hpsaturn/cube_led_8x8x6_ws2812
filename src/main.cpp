@@ -1,4 +1,7 @@
 #include <FastLED.h>
+#include <BluetoothSerial.h>
+
+#define DEEP_SLEEP_DURATION 30 // sleep x seconds and then wake up
 
 #define LED_PIN     16
 #define NUM_LEDS    8*8*6
@@ -26,13 +29,18 @@ CRGB leds[NUM_LEDS];
 // Some notes on the more abstract 'theory and practice' of
 // FastLED compact palettes are at the bottom of this file.
 
-
-
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
 
 extern CRGBPalette16 myRedWhiteBluePalette;
 extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
+
+
+BluetoothSerial btSerial; //Object for Bluetooth
+int incoming;
+bool enablePaletteDemo=true;
+uint8_t speed = 1;
+
 
 // This function sets up a palette of black and white stripes,
 // using code.  Since the palette is effectively an array of
@@ -109,14 +117,12 @@ void ChangePalettePeriodically()
         if( secondHand == 45)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
         if( secondHand == 50)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
         if( secondHand == 55)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
+
+        if(secondHand==10){
+            btSerial.print(".");
+        }     
     }
 }
-
-
-
-
-
-
 
 // This example shows how to set up a static color palette
 // which is stored in PROGMEM (flash), which is almost always more
@@ -144,8 +150,6 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
     CRGB::Black
 };
 
-
-
 // Additional notes on FastLED compact palettes:
 //
 // Normally, in computer graphics, the palette (or "color lookup table")
@@ -168,27 +172,89 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
 // the first sixteen entries from the virtual palette (of 256), you'd get
 // Green, followed by a smooth gradient from green-to-blue, and then Blue.
 
+void gotToSuspend (){
+  Serial.println("-->[ESP] suspending..");
+  delay(10); // waiting for writing msg on serial
+  //esp_sleep_enable_timer_wakeup(1000000LL * DEEP_SLEEP_DURATION);
+  esp_deep_sleep_start();
+}
+
 
 void setup() {
     delay( 3000 ); // power-up safety delay
+    Serial.begin(115200);
+    btSerial.begin("CubeLED");
+    Serial.println("BT Serial ready");
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness(  BRIGHTNESS );
     
     currentPalette = RainbowColors_p;
     currentBlending = LINEARBLEND;
+    Serial.println("Setup ready.");
 }
 
+void animPaletteLoop() {
 
-void loop()
-{
     ChangePalettePeriodically();
-    
+
     static uint8_t startIndex = 0;
-    startIndex = startIndex + 1; /* motion speed */
-    
-    FillLEDsFromPaletteColors( startIndex);
-    
+    startIndex = startIndex + speed; /* motion speed */
+
+    FillLEDsFromPaletteColors(startIndex);
+
     FastLED.show();
     FastLED.delay(1000 / UPDATES_PER_SECOND);
 }
 
+void loop()
+{
+    if (btSerial.isReady())
+    {
+        incoming = btSerial.read(); //Read what we recevive
+
+        if (incoming == 49) {
+            digitalWrite(LED_BUILTIN, HIGH);
+            enablePaletteDemo=true;
+            Serial.println("ON");
+            btSerial.println("Animation turned ON");
+        }
+
+        if (incoming == 48) {
+            digitalWrite(LED_BUILTIN, LOW);
+            enablePaletteDemo=false;
+            FastLED.clear();
+            FastLED.show();
+            Serial.println("OFF");
+            btSerial.println("Animation turned OFF");
+        }
+
+        if (incoming == 43) {
+            btSerial.println("Speed Up");
+            speed++;
+            btSerial.print("speed: ");
+            btSerial.println(speed);
+            Serial.println("Speed Up");
+        }
+
+        if (incoming == 45) {
+            btSerial.println("Speed Down");
+            if(speed>0) speed--;
+            btSerial.print("speed: ");
+            btSerial.println(speed);
+            Serial.println("Speed Down");
+        }
+
+        if (incoming == 80) {
+            btSerial.println("Shutdown ESP32..");
+            Serial.println("Shutdown ESP32..");
+            FastLED.clear();
+            FastLED.show();
+            delay(1000);
+            btSerial.println("halt.");
+            gotToSuspend();
+        }
+    }
+
+    if(enablePaletteDemo) animPaletteLoop();
+
+}
