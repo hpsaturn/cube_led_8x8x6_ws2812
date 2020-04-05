@@ -2,7 +2,7 @@
 
 #define LED_PIN     16
 #define NUM_LEDS    8*8*6
-#define BRIGHTNESS  64
+#define BRIGHTNESS  24
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
 CRGB leds[NUM_LEDS];
