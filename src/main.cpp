@@ -5,7 +5,6 @@
 
 #define LED_PIN     16
 #define NUM_LEDS    8*8*6
-#define BRIGHTNESS  24
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
 CRGB leds[NUM_LEDS];
@@ -40,6 +39,7 @@ BluetoothSerial btSerial; //Object for Bluetooth
 int incoming;
 bool enablePaletteDemo=true;
 uint8_t speed = 1;
+uint8_t mbrightness = 30;
 
 
 // This function sets up a palette of black and white stripes,
@@ -82,10 +82,9 @@ void SetupPurpleAndGreenPalette()
 
 void FillLEDsFromPaletteColors( uint8_t colorIndex)
 {
-    uint8_t brightness = 255;
     
     for( int i = 0; i < NUM_LEDS; i++) {
-        leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
+        leds[i] = ColorFromPalette( currentPalette, colorIndex, mbrightness, currentBlending);
         colorIndex += 3;
     }
 }
@@ -186,7 +185,7 @@ void setup() {
     btSerial.begin("CubeLED");
     Serial.println("BT Serial ready");
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-    FastLED.setBrightness(  BRIGHTNESS );
+    FastLED.setBrightness( mbrightness );
     
     currentPalette = RainbowColors_p;
     currentBlending = LINEARBLEND;
@@ -252,6 +251,22 @@ void loop()
             delay(1000);
             btSerial.println("halt.");
             gotToSuspend();
+        }
+
+        if (incoming == 53) {
+            btSerial.println("Brightness Up");
+            if(mbrightness<254)mbrightness++;
+            btSerial.print("brightness: ");
+            btSerial.println(mbrightness);
+            Serial.println("Brightness Up");
+        }
+
+        if (incoming == 52) {
+            btSerial.println("Brighness Down");
+            if(mbrightness>0) mbrightness--;
+            btSerial.print("brightness: ");
+            btSerial.println(mbrightness);
+            Serial.println("Brightness Down");
         }
     }
 
