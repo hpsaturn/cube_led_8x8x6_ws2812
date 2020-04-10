@@ -18,7 +18,7 @@ The current version state is in progress, but you can test the first 3d models. 
 
 ---
 
-<a href="https://youtu.be/KPNUmPd9I_Y" target="_blank"><img src="https://img.youtube.com/vi/KPNUmPd9I_Y/0.jpg" alt="3D Cube LED 8x8x6" width="384" border="5" /></a>
+<a href="https://youtu.be/KPNUmPd9I_Y" target="_blank"><img src="https://github.com/hpsaturn/cube_led_8x8x6_ws2812/blob/master/photos/youtube.jpg" alt="3D Cube LED 8x8x6" width="484" border="5" /></a>
 
 
 
