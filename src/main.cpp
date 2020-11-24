@@ -39,7 +39,7 @@ BluetoothSerial btSerial; //Object for Bluetooth
 int incoming;
 bool enablePaletteDemo=true;
 uint8_t speed = 3;
-uint8_t mbrightness = 60;
+uint8_t mbrightness = 50;
 
 
 // This function sets up a palette of black and white stripes,
@@ -151,29 +151,31 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
 
 void callback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param){
   if(event == ESP_SPP_SRV_OPEN_EVT){
-    Serial.println("I> client connected");
+    Serial.println("[I][setup] client connected");
   }
 }
 
 void gotToSuspend (){
-  Serial.println("I> suspending..");
+  Serial.println("[I][CMD] suspending..");
   delay(10); // waiting for writing msg on serial
   //esp_sleep_enable_timer_wakeup(1000000LL * DEEP_SLEEP_DURATION);
   esp_deep_sleep_start();
 }
 
 void setup() {
-    delay( 3000 ); // power-up safety delay
     Serial.begin(115200);
-    btSerial.begin("CubeLED");
+    delay( 2000 ); // power-up safety delay
+    btSerial.begin("[I][setup] CubeLED");
     btSerial.register_callback(callback);
-    Serial.println("I> BT Serial ready");
+    Serial.println("[I][setup] bluetooth serial ready");
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness( mbrightness );
+    Serial.print("[I][setup] brightness: ");
+    Serial.println(mbrightness);
     
     currentPalette = RainbowColors_p;
     currentBlending = LINEARBLEND;
-    Serial.println("I> Setup ready");
+    Serial.println("[I][setup] setup ready");
 }
 
 void animPaletteLoop() {
@@ -198,7 +200,7 @@ void loop()
         if (incoming == 49) {
             digitalWrite(LED_BUILTIN, HIGH);
             enablePaletteDemo=true;
-            Serial.println("V> ON");
+            Serial.println("[V][CMD] ON");
             btSerial.println("Animation turned ON");
         }
 
@@ -207,29 +209,29 @@ void loop()
             enablePaletteDemo=false;
             FastLED.clear();
             FastLED.show();
-            Serial.println("V> OFF");
+            Serial.println("[V][CMD] OFF");
             btSerial.println("Animation turned OFF");
         }
 
         if (incoming == 43) {
             btSerial.println("Speed Up");
             speed++;
-            btSerial.print("V> speed: ");
+            btSerial.print("speed: ");
             btSerial.println(speed);
-            Serial.println("Speed Up");
+            Serial.println("[V][CMD] Speed Up");
         }
 
         if (incoming == 45) {
             btSerial.println("Speed Down");
             if(speed>0) speed--;
-            btSerial.print("V> speed: ");
+            btSerial.print("speed: ");
             btSerial.println(speed);
-            Serial.println("Speed Down");
+            Serial.println("[V][CMD] Speed Down");
         }
 
         if (incoming == 80) {
             btSerial.println("Shutdown ESP32..");
-            Serial.println("V> shutdown ESP32..");
+            Serial.println("[V][CMD] shutdown ESP32..");
             FastLED.clear();
             FastLED.show();
             delay(1000);
@@ -238,22 +240,23 @@ void loop()
         }
 
         if (incoming == 53) {
-            btSerial.println("V> brightness Up");
+            btSerial.println("brightness Up");
             if(mbrightness<254)mbrightness++;
             btSerial.print("brightness: ");
             btSerial.println(mbrightness);
-            Serial.println("V> brightness Up");
+            Serial.println("[V][CMD] brightness Up");
         }
 
         if (incoming == 52) {
-            btSerial.println("V> brighness Down");
+            btSerial.println("brighness Down");
             if(mbrightness>0) mbrightness--;
             btSerial.print("brightness: ");
             btSerial.println(mbrightness);
-            Serial.println("V> rightness Down");
+            Serial.println("[V][CMD] rightness Down");
         }
 
         if (incoming == 104) {
+            Serial.println("[V][CMD] show commands help");
             btSerial.println("Commands:");
             btSerial.println("==========");
             btSerial.println("1: Animation on");
