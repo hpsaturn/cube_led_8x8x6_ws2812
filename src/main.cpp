@@ -38,8 +38,8 @@ extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 BluetoothSerial btSerial; //Object for Bluetooth
 int incoming;
 bool enablePaletteDemo=true;
-uint8_t speed = 1;
-uint8_t mbrightness = 30;
+uint8_t speed = 3;
+uint8_t mbrightness = 60;
 
 
 // This function sets up a palette of black and white stripes,
@@ -149,47 +149,31 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
     CRGB::Black
 };
 
-// Additional notes on FastLED compact palettes:
-//
-// Normally, in computer graphics, the palette (or "color lookup table")
-// has 256 entries, each containing a specific 24-bit RGB color.  You can then
-// index into the color palette using a simple 8-bit (one byte) value.
-// A 256-entry color palette takes up 768 bytes of RAM, which on Arduino
-// is quite possibly "too many" bytes.
-//
-// FastLED does offer traditional 256-element palettes, for setups that
-// can afford the 768-byte cost in RAM.
-//
-// However, FastLED also offers a compact alternative.  FastLED offers
-// palettes that store 16 distinct entries, but can be accessed AS IF
-// they actually have 256 entries; this is accomplished by interpolating
-// between the 16 explicit entries to create fifteen intermediate palette
-// entries between each pair.
-//
-// So for example, if you set the first two explicit entries of a compact 
-// palette to Green (0,255,0) and Blue (0,0,255), and then retrieved 
-// the first sixteen entries from the virtual palette (of 256), you'd get
-// Green, followed by a smooth gradient from green-to-blue, and then Blue.
+void callback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param){
+  if(event == ESP_SPP_SRV_OPEN_EVT){
+    Serial.println("I> client connected");
+  }
+}
 
 void gotToSuspend (){
-  Serial.println("-->[ESP] suspending..");
+  Serial.println("I> suspending..");
   delay(10); // waiting for writing msg on serial
   //esp_sleep_enable_timer_wakeup(1000000LL * DEEP_SLEEP_DURATION);
   esp_deep_sleep_start();
 }
 
-
 void setup() {
     delay( 3000 ); // power-up safety delay
     Serial.begin(115200);
     btSerial.begin("CubeLED");
-    Serial.println("BT Serial ready");
+    btSerial.register_callback(callback);
+    Serial.println("I> BT Serial ready");
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness( mbrightness );
     
     currentPalette = RainbowColors_p;
     currentBlending = LINEARBLEND;
-    Serial.println("Setup ready.");
+    Serial.println("I> Setup ready");
 }
 
 void animPaletteLoop() {
@@ -214,7 +198,7 @@ void loop()
         if (incoming == 49) {
             digitalWrite(LED_BUILTIN, HIGH);
             enablePaletteDemo=true;
-            Serial.println("ON");
+            Serial.println("V> ON");
             btSerial.println("Animation turned ON");
         }
 
@@ -223,14 +207,14 @@ void loop()
             enablePaletteDemo=false;
             FastLED.clear();
             FastLED.show();
-            Serial.println("OFF");
+            Serial.println("V> OFF");
             btSerial.println("Animation turned OFF");
         }
 
         if (incoming == 43) {
             btSerial.println("Speed Up");
             speed++;
-            btSerial.print("speed: ");
+            btSerial.print("V> speed: ");
             btSerial.println(speed);
             Serial.println("Speed Up");
         }
@@ -238,14 +222,14 @@ void loop()
         if (incoming == 45) {
             btSerial.println("Speed Down");
             if(speed>0) speed--;
-            btSerial.print("speed: ");
+            btSerial.print("V> speed: ");
             btSerial.println(speed);
             Serial.println("Speed Down");
         }
 
         if (incoming == 80) {
             btSerial.println("Shutdown ESP32..");
-            Serial.println("Shutdown ESP32..");
+            Serial.println("V> shutdown ESP32..");
             FastLED.clear();
             FastLED.show();
             delay(1000);
@@ -254,19 +238,32 @@ void loop()
         }
 
         if (incoming == 53) {
-            btSerial.println("Brightness Up");
+            btSerial.println("V> brightness Up");
             if(mbrightness<254)mbrightness++;
             btSerial.print("brightness: ");
             btSerial.println(mbrightness);
-            Serial.println("Brightness Up");
+            Serial.println("V> brightness Up");
         }
 
         if (incoming == 52) {
-            btSerial.println("Brighness Down");
+            btSerial.println("V> brighness Down");
             if(mbrightness>0) mbrightness--;
             btSerial.print("brightness: ");
             btSerial.println(mbrightness);
-            Serial.println("Brightness Down");
+            Serial.println("V> rightness Down");
+        }
+
+        if (incoming == 104) {
+            btSerial.println("Commands:");
+            btSerial.println("==========");
+            btSerial.println("1: Animation on");
+            btSerial.println("0: Animation off");
+            btSerial.println("0: After off, clear");
+            btSerial.println("4: Brightness down");
+            btSerial.println("5: Brightness up");
+            btSerial.println("+: Speed Up");
+            btSerial.println("-: Speed Down");
+            btSerial.println("P: Power Off");
         }
     }
 
