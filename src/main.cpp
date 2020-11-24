@@ -200,8 +200,8 @@ void loop()
         if (incoming == 49) {
             digitalWrite(LED_BUILTIN, HIGH);
             enablePaletteDemo=true;
-            Serial.println("[V][CMD] ON");
-            btSerial.println("Animation turned ON");
+            Serial.println("[V][CMD] animation on");
+            btSerial.println("animation turned on");
         }
 
         if (incoming == 48) {
@@ -209,28 +209,28 @@ void loop()
             enablePaletteDemo=false;
             FastLED.clear();
             FastLED.show();
-            Serial.println("[V][CMD] OFF");
-            btSerial.println("Animation turned OFF");
+            Serial.println("[V][CMD] animation off");
+            btSerial.println("animation turned off");
         }
 
         if (incoming == 43) {
-            btSerial.println("Speed Up");
+            btSerial.println("speed up");
             speed++;
             btSerial.print("speed: ");
             btSerial.println(speed);
-            Serial.println("[V][CMD] Speed Up");
+            Serial.println("[V][CMD] speed Up");
         }
 
         if (incoming == 45) {
-            btSerial.println("Speed Down");
+            btSerial.println("speed down");
             if(speed>0) speed--;
             btSerial.print("speed: ");
             btSerial.println(speed);
-            Serial.println("[V][CMD] Speed Down");
+            Serial.println("[V][CMD] speed down");
         }
 
         if (incoming == 80) {
-            btSerial.println("Shutdown ESP32..");
+            btSerial.println("shutdown ESP32..");
             Serial.println("[V][CMD] shutdown ESP32..");
             FastLED.clear();
             FastLED.show();
@@ -240,19 +240,19 @@ void loop()
         }
 
         if (incoming == 53) {
-            btSerial.println("brightness Up");
+            btSerial.println("brightness up");
             if(mbrightness<254)mbrightness++;
             btSerial.print("brightness: ");
             btSerial.println(mbrightness);
-            Serial.println("[V][CMD] brightness Up");
+            Serial.println("[V][CMD] brightness up");
         }
 
         if (incoming == 52) {
-            btSerial.println("brighness Down");
+            btSerial.println("brighness down");
             if(mbrightness>0) mbrightness--;
             btSerial.print("brightness: ");
             btSerial.println(mbrightness);
-            Serial.println("[V][CMD] rightness Down");
+            Serial.println("[V][CMD] brightness down");
         }
 
         if (incoming == 104) {
