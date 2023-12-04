@@ -37,8 +37,9 @@ extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 BluetoothSerial btSerial;  //Object for Bluetooth
 int incoming;
 bool enablePaletteDemo = true;
+bool enableAnimsLoop = true;
 uint8_t speed = 3;
-uint8_t mbrightness = 50;
+uint8_t mbrightness = 60;
 
 // This function sets up a palette of black and white stripes,
 // using code.  Since the palette is effectively an array of
@@ -90,7 +91,7 @@ void FillLEDsFromPaletteColors(uint8_t colorIndex) {
 // code that creates color palettes on the fly.  All are shown here.
 
 void ChangePalettePeriodically() {
-    uint8_t secondHand = (millis() / 1000) % 60;
+    uint8_t secondHand = (millis() / 2000) % 60;
     static uint8_t lastSecond = 99;
 
     if (lastSecond != secondHand) {
@@ -204,7 +205,7 @@ void setup() {
 }
 
 void animPaletteLoop() {
-    ChangePalettePeriodically();
+    if (enableAnimsLoop) ChangePalettePeriodically();
 
     static uint8_t startIndex = 0;
     startIndex = startIndex + speed; /* motion speed */
@@ -234,6 +235,8 @@ void loop() {
             Serial.println("[V][CMD] animation off");
             btSerial.println("animation turned off");
         }
+
+
 
         if (incoming == 43) {
             btSerial.println("speed up");
@@ -277,12 +280,34 @@ void loop() {
             Serial.println("[V][CMD] brightness down");
         }
 
+        if (incoming == 82) {
+            btSerial.println("rainbowColors");
+            currentPalette = RainbowColors_p;
+            currentBlending = LINEARBLEND;
+            Serial.println("[V][CMD] rainbownColors");
+        }
+
+        if (incoming == 83) {
+            btSerial.println("stopAnimsChange");
+            enableAnimsLoop = false;
+            Serial.println("[V][CMD] stopAnimsChange");
+        }
+
+        if (incoming == 112) {
+            btSerial.println("playAnimsChange");
+            enableAnimsLoop = true;
+            Serial.println("[V][CMD] playAnimsChange");
+        }
+
         if (incoming == 104) {
             Serial.println("[V][CMD] show commands help");
             btSerial.println("Commands:");
             btSerial.println("==========");
             btSerial.println("1: Animation on");
             btSerial.println("0: Animation off");
+            btSerial.println("R: resetToRainbow");
+            btSerial.println("S: stopAnimsChange");
+            btSerial.println("p: playAnimsChange");
             btSerial.println("0: After off, clear");
             btSerial.println("4: Brightness down");
             btSerial.println("5: Brightness up");
@@ -290,6 +315,7 @@ void loop() {
             btSerial.println("-: Speed Down");
             btSerial.println("P: Power Off");
         }
+        
     }
 
     if (enablePaletteDemo) animPaletteLoop();
