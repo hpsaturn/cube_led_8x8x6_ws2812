@@ -2,6 +2,14 @@
 
 Implementation of Cube with the ESP32 and WS2812 LED panels.
 
+<table>
+	<tr>
+		<td>
+			Don't forget to star ⭐ this repository
+		</td>
+	</tr>
+</table>
+
 ## Build and install
 
 Please, install first [PlatformIO](http://platformio.org/), open source ecosystem for IoT development compatible with **Arduino**, and its command line tools (Windows, MacOs and Linux). Also, you may need to install [git](http://git-scm.com/) in your system. After that please connect your ESP32 board and run the next lines:
@@ -20,7 +28,7 @@ This Cube is compatible with the awesome firmware [WLED](https://github.com/Airc
 
 ## TODO
 
-- [ ] Add the GPU driver on the WLED firmware
+- [ ] Add the IMU driver on the WLED firmware
 - [ ] Add final electronics diagram
 - [ ] Add final base 3dprint files
 - [ ] Audio
