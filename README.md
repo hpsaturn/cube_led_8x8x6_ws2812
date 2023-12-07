@@ -1,6 +1,6 @@
 # Cube LED 8x8x6
 
-Implementation of Cube with the ESP32 and WS2812 LED panels.
+Implementation of a LED Cube with the ESP32 and WS2812 LED panels.
 
 <table>
 	<tr>
