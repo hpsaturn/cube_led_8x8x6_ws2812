@@ -36,11 +36,26 @@ This Cube is compatible with the awesome firmware [WLED](https://github.com/Airc
 
 ![WLED 2D setuo](photos/wled00.jpg)
 
+## Schematics
+
+My current setup uses the next components:
+
+| Item              | Seller | Notes |
+| :---------------- | :---------: | :------------- |
+| ESP32 TTGO T7 v1.5 | [Aliexpress](https://www.aliexpress.com/item/32845357819.html) | (recommended than v1.3 or v1.4) |
+| 6 LED panels 8x8 | [Aliexpress](https://www.aliexpress.com/item/32671025605.html)   | |
+| Lipo Battery 3.7v | [Aliexpress](https://www.aliexpress.com/item/1005006163946823.html) | (Only a reference, could be similar) |
+| Lipo charger** | [Aliexpress](https://es.aliexpress.com/item/32621399438.html) | (Plase se the note bellow) |
+| switch 3mm** | [Aliexpress](https://www.aliexpress.com/item/4001207529493.html) | (Plase se the note bellow) |
+| MicroUSB connector | [Aliexpress](https://www.aliexpress.com/item/1005006088838882.html) | For the charger base |
+
+Note: I incorporated this additional lipo charger due to the inadequate Vin protection on my current TTGO T7 v1.3, which experiences a voltage drop across a diode. Using this LipoCharger ensures better protection, preventing voltage loss in the output and enhancing brightness. I am waiting for the arrival of a new TTGO T7 v1.5 or the new T7 S3 versions, as they feature superior protections and eliminate voltage drops. Additionally, these boards boast improved power consumption during deep-sleep mode. My plan is to eliminate the switch and maybe this extra charger, taking advantage of these enhancements.
+
 ## TODO
 
 - [ ] Add the IMU driver on the WLED firmware
 - [ ] Add final electronics diagram
-- [ ] Add final base 3dprint files
+- [x] Added charger base 3dprint files (first version)
 - [ ] Audio
 
 ## 3D Model - body
