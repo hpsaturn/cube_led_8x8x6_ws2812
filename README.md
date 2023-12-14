@@ -48,6 +48,7 @@ My current setup uses the next components:
 | Lipo charger** | [Aliexpress](https://es.aliexpress.com/item/32621399438.html) | (Plase se the note bellow) |
 | switch 3mm** | [Aliexpress](https://www.aliexpress.com/item/4001207529493.html) | (Plase se the note bellow) |
 | MicroUSB connector | [Aliexpress](https://www.aliexpress.com/item/1005006088838882.html) | For the charger base |
+| Pogo pins | [AmazonDE](https://www.amazon.de/dp/B07FPPFWS4) | |
 
 Note: I incorporated this additional lipo charger due to the inadequate Vin protection on my current TTGO T7 v1.3, which experiences a voltage drop across a diode. Using this LipoCharger ensures better protection, preventing voltage loss in the output and enhancing brightness. I am waiting for the arrival of a new TTGO T7 v1.5 or the new T7 S3 versions, as they feature superior protections and eliminate voltage drops. Additionally, these boards boast improved power consumption during deep-sleep mode. My plan is to eliminate the switch and maybe this extra charger, taking advantage of these enhancements.
 
