@@ -66,3 +66,10 @@ The current version state is **"in progress"**, but you can test the first 3d mo
 ---
 
 <a href="https://youtu.be/KPNUmPd9I_Y" target="_blank"><img src="https://github.com/hpsaturn/cube_led_8x8x6_ws2812/blob/master/photos/youtube.jpg" alt="3D Cube LED 8x8x6" width="484" border="5" /></a>
+
+## Contributions and Thanks
+
+Thanks to [Jordi Mayné](https://github.com/maynej) for your 3D Print improvements around the cube lid and your translations to the Catalan and Spanish lenguaje [^1].
+
+[![Remix LID improvement](photos/remix_lid_improvement.jpg)](https://github.com/maynej/Cub-Neopixel/tree/main)
+[^1]: [Lid remix and Catalan/Spanish documentation](https://github.com/maynej/Cub-Neopixel/tree/main)
